@@ -2,6 +2,12 @@
 
 </canvas>
 <script>
+function copy(a) {
+
+return JSON.parse(JSON.stringify(a))
+
+}
+
 	/* GIVEN x and y (the center coordinates), the radius and the number of polygon sides RETURNS AN ARRAY OF VERTICE COORDINATES */
 	function polygon(x, y, radius, sides) {
 		var crd = [];
@@ -33,27 +39,26 @@
     
     vertices = polygon(0,0,circumradius,n)
     console.log(vertices)
-    
-        
-    for (x = 1; x <= math.floor(vertices.length/4); x++) {
+
+
+		// We will be creating a triangle fan
+    // The idea is that at every pair of vertices,
+    // we will connect them to the first vertice
+    // to form a triangle
+    for (x = 1; x <= Math.floor(vertices.length/2); x++) {
 	    		// x coord
-          result.push(vertices[x])
+          result.push(copy(vertices[x][0]))
           // y coord
-      		result.push(vertices[x+1])
-          // z coord
-          result.push(vertices[0])
+      		result.push(copy(vertices[x][1]))
           
-      		// x2 coord
-          result.push(vertices[x+2])
-          // y2 coord
-      		result.push(vertices[x+3])
-          // z2 coord
-          result.push(vertices[0])
+      		// x1 coord
+          result.push(copy(vertices[x+1][0]))
+          // y1 coord
+      		result.push(copy(vertices[x+1][1]))
 
-
-    result.push(vertices[0])
-    result.push(vertices[1])
-    result.push(0)
+					// first vertice
+					result.push(copy(vertices[0][0]))
+			    result.push(copy(vertices[0][1]))
     }
     
     return result
@@ -73,19 +78,8 @@
     // Copy an array of data points forming a triangle to the
     // graphics hardware
     //
-    /*    var vertices = [
-           -0.5,0.5,
-           -0.5,-0.5,
-            0.5,-0.7,
-           0.5,-0.5,
-            -0.5,0.9,
-           0.5,0.5,
-                  1.5,-1.5,
-            -1.5,1.9,
-           1.5,1.5,
-           
-       ]; */
-    var vertices = createRegularPolygonvertices(5, 1)
+
+    var vertices = createRegularPolygonvertices(4, 0.5)
     console.log(vertices)
 
     var buffer = gl.createBuffer();
