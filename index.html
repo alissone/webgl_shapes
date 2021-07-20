@@ -11,6 +11,7 @@
   /* GIVEN x and y (the center coordinates), the radius and the number of polygon sides RETURNS AN ARRAY OF VERTICE COORDINATES */
   function polygon(x, y, radius, sides) {
     var crd = [];
+    var angle=6
 
     /* 1 SIDE CASE */
     if (sides == 1)
@@ -20,7 +21,7 @@
 
     /* > 1 SIDE CASEs */
     for (var i = 0; i < sides; i++) {
-      crd.push([(x + (Math.sin(2 * Math.PI * i / sides) * radius)), (y - (Math.cos(2 * Math.PI * i / sides) * radius))]);
+      crd.push([(x + (Math.sin(angle + 2 * Math.PI * i / sides) * radius)), (y - (Math.cos(angle + 2 * Math.PI * i / sides) * radius))]);
     }
     return crd;
   }
@@ -75,8 +76,11 @@ if (x < vertices.length - 1) {
       //if (x % 2 == 0) {
         // first vertice
 
-        result.push(centerX)
-        result.push(centerY)
+        /* result.push(centerX) */
+        /* result.push(centerY) */
+			result.push(copy(vertices[0][0]))
+      // y coord
+      result.push(copy(vertices[0][1]))
 //      }
 
 
@@ -100,7 +104,7 @@ if (x < vertices.length - 1) {
     // graphics hardware
     //
 
-    var vertices = createRegularPolygonvertices(5, 0.5)
+    var vertices = createRegularPolygonvertices(7, 0.5)
     console.log(vertices)
 
     var buffer = gl.createBuffer();
