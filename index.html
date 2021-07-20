@@ -2,65 +2,86 @@
 
 </canvas>
 <script>
-function copy(a) {
+  function copy(a) {
 
-return JSON.parse(JSON.stringify(a))
+    return JSON.parse(JSON.stringify(a))
 
-}
+  }
 
-	/* GIVEN x and y (the center coordinates), the radius and the number of polygon sides RETURNS AN ARRAY OF VERTICE COORDINATES */
-	function polygon(x, y, radius, sides) {
-		var crd = [];
+  /* GIVEN x and y (the center coordinates), the radius and the number of polygon sides RETURNS AN ARRAY OF VERTICE COORDINATES */
+  function polygon(x, y, radius, sides) {
+    var crd = [];
 
-		/* 1 SIDE CASE */
-		if (sides == 1)
-		return [[x, y]];
+    /* 1 SIDE CASE */
+    if (sides == 1)
+      return [
+        [x, y]
+      ];
 
-		/* > 1 SIDE CASEs */
-		for (var i = 0; i < sides; i++) {
-			crd.push([(x + (Math.sin(2 * Math.PI * i / sides) * radius)), (y - (Math.cos(2 * Math.PI * i / sides) * radius))]);
-		}
-		return crd;
-	}
+    /* > 1 SIDE CASEs */
+    for (var i = 0; i < sides; i++) {
+      crd.push([(x + (Math.sin(2 * Math.PI * i / sides) * radius)), (y - (Math.cos(2 * Math.PI * i / sides) * radius))]);
+    }
+    return crd;
+  }
+  
+  function geometricMean(x1,y1,x2,y2) {
+  return [(x1+x2)/2, (y1+y2)/2]
+  }
 
   function createRegularPolygonvertices(n, circumradius) {
 
     var vertices = [];
     var x;
-        var result = [];
+    var result = [];
 
     // Generate the vertices of the n-gon.
-   /*  for (x = 1; x <= n; x++) {
-          vertices.push(circumradius * Math.sin((Math.PI / n) + (x * ((2 * Math.PI) / n))));
-      vertices.push(circumradius * Math.cos((Math.PI / n) + (x * ((2 * Math.PI) / n))));
-      vertices.push(0);
-    
-    } */
-    
-    vertices = polygon(0,0,circumradius,n)
+    /*  for (x = 1; x <= n; x++) {
+           vertices.push(circumradius * Math.sin((Math.PI / n) + (x * ((2 * Math.PI) / n))));
+       vertices.push(circumradius * Math.cos((Math.PI / n) + (x * ((2 * Math.PI) / n))));
+       vertices.push(0);
+     
+     } */
+
+    var centerX = 0;
+    var centerY = 0;
+
+    vertices = polygon(centerX, centerY, circumradius, n)
     console.log(vertices)
 
 
-		// We will be creating a triangle fan
+    // We will be creating a triangle fan
     // The idea is that at every pair of vertices,
     // we will connect them to the first vertice
     // to form a triangle
-    for (x = 1; x <= Math.floor(vertices.length/2); x++) {
-	    		// x coord
-          result.push(copy(vertices[x][0]))
-          // y coord
-      		result.push(copy(vertices[x][1]))
-          
-      		// x1 coord
-          result.push(copy(vertices[x+1][0]))
-          // y1 coord
-      		result.push(copy(vertices[x+1][1]))
+    for (x = 1; x < vertices.length; x++) {
+      // x coord
+      result.push(copy(vertices[x][0]))
+      // y coord
+      result.push(copy(vertices[x][1]))
 
-					// first vertice
-					result.push(copy(vertices[0][0]))
-			    result.push(copy(vertices[0][1]))
+if (x < vertices.length - 1) {
+      // x1 coord
+      result.push(copy(vertices[x + 1][0]))
+      // y1 coord
+      result.push(copy(vertices[x + 1][1]))
+} else {
+      // x coord
+      result.push(copy(vertices[0][0]))
+      // y coord
+      result.push(copy(vertices[0][1]))
+}
+
+      //if (x % 2 == 0) {
+        // first vertice
+
+        result.push(centerX)
+        result.push(centerY)
+//      }
+
+
     }
-    
+
     return result
   }
 
@@ -79,7 +100,7 @@ return JSON.parse(JSON.stringify(a))
     // graphics hardware
     //
 
-    var vertices = createRegularPolygonvertices(4, 0.5)
+    var vertices = createRegularPolygonvertices(5, 0.5)
     console.log(vertices)
 
     var buffer = gl.createBuffer();
