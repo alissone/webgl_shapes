@@ -1,131 +1,177 @@
 <canvas id="mainCanvas">
-    
-</canvas>   
+
+</canvas>
 <script>
-function    createRegularPolygonvertices(sides, n, circumradius) {
+	/* GIVEN x and y (the center coordinates), the radius and the number of polygon sides RETURNS AN ARRAY OF VERTICE COORDINATES */
+	function polygon(x, y, radius, sides) {
+		var crd = [];
 
-var        vertices = []
-var        x;
+		/* 1 SIDE CASE */
+		if (sides == 1)
+		return [[x, y]];
 
-      for (x = 1; x <= sides; x++) {
-        vertices.push(circumradius * Math.sin((Math.PI / n) + (x * ((2 * Math.PI) / n))));
-        vertices.push(circumradius * Math.cos((Math.PI / n) + (x * ((2 * Math.PI) / n))));
-        vertices.push(0);
+		/* > 1 SIDE CASEs */
+		for (var i = 0; i < sides; i++) {
+			crd.push([(x + (Math.sin(2 * Math.PI * i / sides) * radius)), (y - (Math.cos(2 * Math.PI * i / sides) * radius))]);
+		}
+		return crd;
+	}
 
-      }
-		return vertices
-   }
+  function createRegularPolygonvertices(n, circumradius) {
 
-function main()
-{
-   // Configure the canvas to use WebGL
-   //
-   var gl;
-   var canvas = document.getElementById('mainCanvas');
-   try {
+    var vertices = [];
+    var x;
+        var result = [];
+
+    // Generate the vertices of the n-gon.
+   /*  for (x = 1; x <= n; x++) {
+          vertices.push(circumradius * Math.sin((Math.PI / n) + (x * ((2 * Math.PI) / n))));
+      vertices.push(circumradius * Math.cos((Math.PI / n) + (x * ((2 * Math.PI) / n))));
+      vertices.push(0);
+    
+    } */
+    
+    vertices = polygon(0,0,circumradius,n)
+    console.log(vertices)
+    
+        
+    for (x = 1; x <= math.floor(vertices.length/4); x++) {
+	    		// x coord
+          result.push(vertices[x])
+          // y coord
+      		result.push(vertices[x+1])
+          // z coord
+          result.push(vertices[0])
+          
+      		// x2 coord
+          result.push(vertices[x+2])
+          // y2 coord
+      		result.push(vertices[x+3])
+          // z2 coord
+          result.push(vertices[0])
+
+
+    result.push(vertices[0])
+    result.push(vertices[1])
+    result.push(0)
+    }
+    
+    return result
+  }
+
+  function main() {
+    // Configure the canvas to use WebGL
+    //
+    var gl;
+    var canvas = document.getElementById('mainCanvas');
+    try {
       gl = canvas.getContext('webgl');
-   } catch (e) {
+    } catch (e) {
       throw new Error('no WebGL found');
-   }
+    }
 
-   // Copy an array of data points forming a triangle to the
-   // graphics hardware
-   //
-/*    var vertices = [
-       -0.5,0.5,
-       -0.5,-0.5,
-        0.5,-0.7,
-       0.5,-0.5,
-        -0.5,0.9,
-       0.5,0.5,
-              1.5,-1.5,
-        -1.5,1.9,
-       1.5,1.5,
-       
-   ]; */
-   var vertices = createRegularPolygonvertices(6,3,1)
-   
-   var buffer = gl.createBuffer();
-   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    // Copy an array of data points forming a triangle to the
+    // graphics hardware
+    //
+    /*    var vertices = [
+           -0.5,0.5,
+           -0.5,-0.5,
+            0.5,-0.7,
+           0.5,-0.5,
+            -0.5,0.9,
+           0.5,0.5,
+                  1.5,-1.5,
+            -1.5,1.9,
+           1.5,1.5,
+           
+       ]; */
+    var vertices = createRegularPolygonvertices(5, 1)
+    console.log(vertices)
 
-   // Create a simple vertex shader
-   //
-   var vertCode =
-        'attribute vec2 coordinates;' +
-        'void main(void) {' +
-        '  gl_Position = vec4(coordinates, 0.0, 1.0);' +
-        '}';
+    var buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-   var vertShader = gl.createShader(gl.VERTEX_SHADER);
-   gl.shaderSource(vertShader, vertCode);
-   gl.compileShader(vertShader);
-   if (!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS))
+    // Create a simple vertex shader
+    //
+    var vertCode =
+      'attribute vec2 coordinates;' +
+      'void main(void) {' +
+      '  gl_Position = vec4(coordinates, 0.0, 1.0);' +
+      '}';
+
+    var vertShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertShader, vertCode);
+    gl.compileShader(vertShader);
+    if (!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS))
       throw new Error(gl.getShaderInfoLog(vertShader));
 
-   // Create a simple fragment shader
-   //
-   var fragCode =
-      'void main(void) {' +
-      '   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);' +
-      '}';
-    
-       var fragCode1 =
+    // Create a simple fragment shader
+    //
+    var fragCode =
       'void main(void) {' +
       '   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);' +
       '}';
 
-   var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-   gl.shaderSource(fragShader, fragCode);
-   gl.compileShader(fragShader);
-   if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS))
+    var fragCode1 =
+      'void main(void) {' +
+      '   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);' +
+      '}';
+
+    var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fragShader, fragCode);
+    gl.compileShader(fragShader);
+    if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS))
       throw new Error(gl.getShaderInfoLog(fragShader));
 
-   // Put the vertex shader and fragment shader together into
-   // a complete program
-   //
-   var shaderProgram = gl.createProgram();
-   gl.attachShader(shaderProgram, vertShader);
-   gl.attachShader(shaderProgram, fragShader);
-   gl.linkProgram(shaderProgram);
-   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS))
+    // Put the vertex shader and fragment shader together into
+    // a complete program
+    //
+    var shaderProgram = gl.createProgram();
+    gl.attachShader(shaderProgram, vertShader);
+    gl.attachShader(shaderProgram, fragShader);
+    gl.linkProgram(shaderProgram);
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS))
       throw new Error(gl.getProgramInfoLog(shaderProgram));
 
-   // Everything we need has now been copied to the graphics
-   // hardware, so we can start drawing
+    // Everything we need has now been copied to the graphics
+    // hardware, so we can start drawing
 
-   // Clear the drawing surface
-   //
-   gl.clearColor(1.0, .90, 1.0, .75);
-   gl.clear(gl.COLOR_BUFFER_BIT);
+    // Clear the drawing surface
+    //
+    gl.clearColor(1.0, .90, 1.0, .75);
+    gl.clear(gl.COLOR_BUFFER_BIT);
 
-   // Tell WebGL which shader program to use
-   //
-   gl.useProgram(shaderProgram);
+    // Tell WebGL which shader program to use
+    //
+    gl.useProgram(shaderProgram);
 
-   // Tell WebGL that the data from the array of triangle
-   // coordinates that we've already copied to the graphics
-   // hardware should be fed to the vertex shader as the
-   // parameter "coordinates"
-   //
-   var coordinatesVar = gl.getAttribLocation(shaderProgram, "coordinates");
-   gl.enableVertexAttribArray(coordinatesVar);
-   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-   gl.vertexAttribPointer(coordinatesVar, 2, gl.FLOAT, false, 0, 0);
+    // Tell WebGL that the data from the array of triangle
+    // coordinates that we've already copied to the graphics
+    // hardware should be fed to the vertex shader as the
+    // parameter "coordinates"
+    //
+    var coordinatesVar = gl.getAttribLocation(shaderProgram, "coordinates");
+    gl.enableVertexAttribArray(coordinatesVar);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.vertexAttribPointer(coordinatesVar, 2, gl.FLOAT, false, 0, 0);
 
-   // Now we can tell WebGL to draw the 3 points that make 
-   // up the triangle
-   //
+    // Now we can tell WebGL to draw the 3 points that make 
+    // up the triangle
+    //
 
-   gl.drawArrays(gl.TRIANGLES, 0, vertices.length/2);
-    
-}
+    gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2);
 
-main();
+  }
+
+  main();
+
 </script>
 <style>
-canvas {
-    width:400;
-    height:400;
-}
+  canvas {
+    width: 400;
+    height: 400;
+  }
+
 </style>
+
