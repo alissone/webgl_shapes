@@ -1,6 +1,23 @@
 <canvas id="mainCanvas">
-
 </canvas>
+
+<div id="app">
+  <!-- default props -->
+  <vue-slider
+    ref="slider"
+    v-model="value"
+    v-bind="options"
+  ></vue-slider>
+  <h1>{{ value }}</h1>
+</div>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-slider-component@latest/theme/default.css">
+
+<script src="https://cdn.jsdelivr.net/npm/vue-slider-component@latest/dist/vue-slider-component.umd.min.js"></script>
+
+
+
 <script>
   function copy(a) {
 
@@ -10,7 +27,7 @@
 
   function polygon(x, y, radius, sides, angle) {
     var crd = [];
-    angle = angle + 180 // Make the shape upside up by default
+    // angle = angle - 180 // Make the shape upside up by default
 
     for (var i = 0; i < sides; i++) {
       crd.push([
@@ -21,13 +38,14 @@
     return crd;
   }
 
-  function createRegularPolygonvertices(x,y,sides, circumradius, angle) {
+  function createRegularPolygonvertices(x, y, sides, circumradius, angle) {
 
     var vertices = [];
     var x;
     var result = [];
 
-
+    // This will generate only the vertices at the edge of the circle
+    // To make them visible we will generate triangles out of them below
     vertices = polygon(x, y, circumradius, sides, angle)
 
     // We will be creating a triangle fan
@@ -35,7 +53,7 @@
     // we will connect them back to the first vertice
     // to form a triangle
     for (x = 1; x < vertices.length; x++) {
-    
+
       // x coord
       result.push(copy(vertices[x][0]))
       // y coord
@@ -47,8 +65,8 @@
         // y1 coord
         result.push(copy(vertices[x + 1][1]))
       } else {
-      	// The last one should end up in the beginning again
-        
+        // The last one should end up in the beginning again
+
         // x coord
         result.push(copy(vertices[0][0]))
         // y coord
@@ -64,7 +82,85 @@
     return result
   }
 
-  function main() {
+  
+
+//  render();
+
+
+
+
+
+new Vue( {
+  el: '#app',
+  data () {
+    return {
+    	value: 0,
+      options: {
+        dotSize: 14,
+        width: 'auto',
+        height: 4,
+        contained: false,
+        direction: 'ltr',
+	      data: null,
+        dataLabel: 'label',
+        dataValue: 'value',
+        min: 0,
+        max: 9,
+        interval: 1,
+        disabled: false,
+        clickable: true,
+        duration: 0.5,
+        adsorb: false,
+        lazy: false,
+        tooltip: 'active',
+        tooltipPlacement: 'top',
+        tooltipFormatter: void 0,
+        useKeyboard: false,
+        keydownHook: null,
+        dragOnClick: false,
+        enableCross: true,
+        fixed: false,
+        minRange: void 0,
+        maxRange: void 0,
+        order: true,
+        marks: false,
+        dotOptions: void 0,
+        dotAttrs: void 0,
+        process: true,
+        dotStyle: void 0,
+        railStyle: void 0,
+        processStyle: void 0,
+        tooltipStyle: void 0,
+        stepStyle: void 0,
+        stepActiveStyle: void 0,
+        labelStyle: void 0,
+        labelActiveStyle: void 0,
+      }
+    }
+  },
+  methods: {
+  render(centerX,centerY,polygonSides,polygonRadius,angle) {
+
+    // Create a simple vertex shader
+    //
+    var vertCode =
+      'attribute vec2 coordinates;' +
+      'void main(void) {' +
+      '  gl_Position = vec4(coordinates, 0.0, 1.0);' +
+      '}';
+
+    // Create a simple fragment shader
+    //
+    var fragCode =
+      'void main(void) {' +
+      '   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);' +
+      '}';
+
+    var fragCode1 =
+      'void main(void) {' +
+      '   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);' +
+      '}';
+
     // Configure the canvas to use WebGL
     //
     var gl;
@@ -79,20 +175,16 @@
     // graphics hardware
     //
 
-    var vertices = createRegularPolygonvertices(0.5,0.5,7, 0.5,90)
+    var vertices = createRegularPolygonvertices(
+    centerX,centerY,polygonSides,polygonRadius,angle
+    )
     console.log(vertices)
 
     var buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-    // Create a simple vertex shader
-    //
-    var vertCode =
-      'attribute vec2 coordinates;' +
-      'void main(void) {' +
-      '  gl_Position = vec4(coordinates, 0.0, 1.0);' +
-      '}';
+
 
     var vertShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vertShader, vertCode);
@@ -100,17 +192,6 @@
     if (!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS))
       throw new Error(gl.getShaderInfoLog(vertShader));
 
-    // Create a simple fragment shader
-    //
-    var fragCode =
-      'void main(void) {' +
-      '   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);' +
-      '}';
-
-    var fragCode1 =
-      'void main(void) {' +
-      '   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);' +
-      '}';
 
     var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragShader, fragCode);
@@ -132,12 +213,10 @@
     // hardware, so we can start drawing
 
     // Clear the drawing surface
-    //
     gl.clearColor(1.0, .90, 1.0, .75);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     // Tell WebGL which shader program to use
-    //
     gl.useProgram(shaderProgram);
 
     // Tell WebGL that the data from the array of triangle
@@ -152,13 +231,26 @@
 
     // Now we can tell WebGL to draw the 3 points that make 
     // up the triangle
-    //
-
     gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2);
 
   }
+  },
+  mounted () {
+  this.render(0.5, 0.5, 7, 0.5, this.value);
+  },
+  components: {
+    'vueSlider': window[ 'vue-slider-component' ],
+  },
+  watch: {
+value: function(newVal, oldVal) {
+console.log('value changed from ' + oldVal + ' to ' + newVal);
+  this.render(0.5, 0.5, newVal, 0.5, 0);
+}
+  }
+},
 
-  main();
+);
+
 
 </script>
 <style>
