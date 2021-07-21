@@ -13,5 +13,3 @@
 - [ ] Separar funcionalidades por questão
 - [ ] Ajustar CSS para uma aparência agradável (Bulma ou Tailwind)
 - [ ] Deploy para GitHub pages, Heroku ou Firebase
-
-*(TODO: Adicionar a dependência de https://unpkg.com/vue@2.5.2/dist/vue.min.js como <script> dentro do HTML)*
