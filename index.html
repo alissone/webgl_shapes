@@ -1,15 +1,13 @@
-<canvas id="mainCanvas">
-</canvas>
+<canvas id="canvasQuestionOne"></canvas>
+<canvas id="canvasQuestionTwo"></canvas>
+<canvas id="canvasQuestionThree"></canvas>
+
 
 <script src="https://unpkg.com/vue@2.5.2/dist/vue.min.js"></script>
 
 
 <div id="app">
-  <vue-slider
-    ref="slider"
-    v-model="value"
-    v-bind="options"
-  ></vue-slider>
+  <vue-slider ref="slider" v-model="value" v-bind="options"></vue-slider>
   <h1>{{ value }}</h1>
 </div>
 
@@ -28,10 +26,10 @@
     return JSON.parse(JSON.stringify(a))
 
   }
-  
-  
+
+
   function glFromId(canvasId) {
-	  // Configure the canvas to use WebGL
+    // Configure the canvas to use WebGL
     //
     var gl;
     var canvas = document.getElementById(canvasId);
@@ -102,178 +100,189 @@
     return result
   }
 
-  
 
 
 
 
-new Vue( {
-  el: '#app',
-  data () {
-    return {
-    	sliders: {
-      	
+
+  new Vue({
+      el: '#app',
+      data() {
+        return {
+          sliders: {
+            questionOneSides:0,
+            questionTwoRotation:0,
+            questionTwoTranslationX:0,
+            questionTwoTranslationY:0,
+            questionTwoScale:0,
+          },
+          value: 3,
+          options: {
+            dotSize: 14,
+            width: 'auto',
+            height: 4,
+            contained: false,
+            direction: 'ltr',
+            data: null,
+            dataLabel: 'label',
+            dataValue: 'value',
+            min: 3,
+            max: 12,
+            interval: 1,
+            disabled: false,
+            clickable: true,
+            duration: 0.5,
+            adsorb: false,
+            lazy: false,
+            tooltip: 'active',
+            tooltipPlacement: 'top',
+            tooltipFormatter: void 0,
+            useKeyboard: false,
+            keydownHook: null,
+            dragOnClick: false,
+            enableCross: true,
+            fixed: false,
+            minRange: void 0,
+            maxRange: void 0,
+            order: true,
+            marks: false,
+            dotOptions: void 0,
+            dotAttrs: void 0,
+            process: true,
+            dotStyle: void 0,
+            railStyle: void 0,
+            processStyle: void 0,
+            tooltipStyle: void 0,
+            stepStyle: void 0,
+            stepActiveStyle: void 0,
+            labelStyle: void 0,
+            labelActiveStyle: void 0,
+          }
+        }
       },
-    	value: 3,
-      options: {
-        dotSize: 14,
-        width: 'auto',
-        height: 4,
-        contained: false,
-        direction: 'ltr',
-	      data: null,
-        dataLabel: 'label',
-        dataValue: 'value',
-        min: 3,
-        max: 12,
-        interval: 1,
-        disabled: false,
-        clickable: true,
-        duration: 0.5,
-        adsorb: false,
-        lazy: false,
-        tooltip: 'active',
-        tooltipPlacement: 'top',
-        tooltipFormatter: void 0,
-        useKeyboard: false,
-        keydownHook: null,
-        dragOnClick: false,
-        enableCross: true,
-        fixed: false,
-        minRange: void 0,
-        maxRange: void 0,
-        order: true,
-        marks: false,
-        dotOptions: void 0,
-        dotAttrs: void 0,
-        process: true,
-        dotStyle: void 0,
-        railStyle: void 0,
-        processStyle: void 0,
-        tooltipStyle: void 0,
-        stepStyle: void 0,
-        stepActiveStyle: void 0,
-        labelStyle: void 0,
-        labelActiveStyle: void 0,
+      methods: {
+        render(gl, centerX, centerY, polygonSides, polygonRadius, angle) {
+
+          // Create a simple vertex shader
+          //
+          var vertCode =
+            'attribute vec2 coordinates;' +
+            'void main(void) {' +
+            '  gl_Position = vec4(coordinates, 0.0, 1.0);' +
+            '}';
+
+          // Create a simple fragment shader
+          //
+          var fragCode =
+            'void main(void) {' +
+            '   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);' +
+            '}';
+
+          var fragCode1 =
+            'void main(void) {' +
+            '   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);' +
+            '}';
+
+          /*  Configure the canvas to use WebGL
+
+          var gl;
+          
+          try {
+            gl = canvas.getContext('webgl');
+          } catch (e) {
+            throw new Error('no WebGL found');
+          }
+           */
+          // Copy an array of data points forming a triangle to the
+          // graphics hardware
+          //
+
+          var vertices = createRegularPolygonvertices(
+            centerX, centerY, polygonSides, polygonRadius, angle
+          )
+          console.log(vertices)
+
+          var buffer = gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+          gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+
+
+          var vertShader = gl.createShader(gl.VERTEX_SHADER);
+          gl.shaderSource(vertShader, vertCode);
+          gl.compileShader(vertShader);
+          if (!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS))
+            throw new Error(gl.getShaderInfoLog(vertShader));
+
+
+          var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+          gl.shaderSource(fragShader, fragCode);
+          gl.compileShader(fragShader);
+          if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS))
+            throw new Error(gl.getShaderInfoLog(fragShader));
+
+          // Put the vertex shader and fragment shader together into
+          // a complete program
+          //
+          var shaderProgram = gl.createProgram();
+          gl.attachShader(shaderProgram, vertShader);
+          gl.attachShader(shaderProgram, fragShader);
+          gl.linkProgram(shaderProgram);
+          if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS))
+            throw new Error(gl.getProgramInfoLog(shaderProgram));
+
+          // Everything we need has now been copied to the graphics
+          // hardware, so we can start drawing
+
+          // Clear the drawing surface
+          gl.clearColor(1.0, .90, 1.0, .75);
+          gl.clear(gl.COLOR_BUFFER_BIT);
+
+          // Tell WebGL which shader program to use
+          gl.useProgram(shaderProgram);
+
+          // Tell WebGL that the data from the array of triangle
+          // coordinates that we've already copied to the graphics
+          // hardware should be fed to the vertex shader as the
+          // parameter "coordinates"
+          //
+          var coordinatesVar = gl.getAttribLocation(shaderProgram, "coordinates");
+          gl.enableVertexAttribArray(coordinatesVar);
+          gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+          gl.vertexAttribPointer(coordinatesVar, 2, gl.FLOAT, false, 0, 0);
+
+          // Now we can tell WebGL to draw the 3 points that make 
+          // up the triangle
+          gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2);
+
+        }
+      },
+      mounted() {
+        var canvasQuestionOne = glFromId('canvasQuestionOne');
+        var canvasQuestionTwo = glFromId('canvasQuestionTwo');
+        var canvasQuestionThree = glFromId('canvasQuestionThree');
+
+
+
+        this.render(canvasQuestionOne, 0.5, 0.5, this.value, 0.5, 0);
+        this.render(canvasQuestionTwo, 0.5, 0.5, this.value, 0.5, 0);
+        this.render(canvasQuestionThree, 0.5, 0.5, this.value, 0.5, 0);
+
+
+      },
+      components: {
+        'vueSlider': window['vue-slider-component'],
+      },
+      watch: {
+        value: function(newVal, oldVal) {
+          console.log('value changed from ' + oldVal + ' to ' + newVal);
+          var gl = glFromId('canvasQuestionOne');
+          this.render(gl, 0.5, 0.5, newVal, 0.5, 0);
+        }
       }
-    }
-  },
-  methods: {
-  render(gl, centerX,centerY,polygonSides,polygonRadius,angle) {
+    },
 
-    // Create a simple vertex shader
-    //
-    var vertCode =
-      'attribute vec2 coordinates;' +
-      'void main(void) {' +
-      '  gl_Position = vec4(coordinates, 0.0, 1.0);' +
-      '}';
-
-    // Create a simple fragment shader
-    //
-    var fragCode =
-      'void main(void) {' +
-      '   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);' +
-      '}';
-
-    var fragCode1 =
-      'void main(void) {' +
-      '   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);' +
-      '}';
-      
-    /*  Configure the canvas to use WebGL
-
-    var gl;
-    
-    try {
-      gl = canvas.getContext('webgl');
-    } catch (e) {
-      throw new Error('no WebGL found');
-    }
-     */
-    // Copy an array of data points forming a triangle to the
-    // graphics hardware
-    //
-
-    var vertices = createRegularPolygonvertices(
-    centerX,centerY,polygonSides,polygonRadius,angle
-    )
-    console.log(vertices)
-
-    var buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-
-
-
-    var vertShader = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(vertShader, vertCode);
-    gl.compileShader(vertShader);
-    if (!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS))
-      throw new Error(gl.getShaderInfoLog(vertShader));
-
-
-    var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(fragShader, fragCode);
-    gl.compileShader(fragShader);
-    if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS))
-      throw new Error(gl.getShaderInfoLog(fragShader));
-
-    // Put the vertex shader and fragment shader together into
-    // a complete program
-    //
-    var shaderProgram = gl.createProgram();
-    gl.attachShader(shaderProgram, vertShader);
-    gl.attachShader(shaderProgram, fragShader);
-    gl.linkProgram(shaderProgram);
-    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS))
-      throw new Error(gl.getProgramInfoLog(shaderProgram));
-
-    // Everything we need has now been copied to the graphics
-    // hardware, so we can start drawing
-
-    // Clear the drawing surface
-    gl.clearColor(1.0, .90, 1.0, .75);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
-    // Tell WebGL which shader program to use
-    gl.useProgram(shaderProgram);
-
-    // Tell WebGL that the data from the array of triangle
-    // coordinates that we've already copied to the graphics
-    // hardware should be fed to the vertex shader as the
-    // parameter "coordinates"
-    //
-    var coordinatesVar = gl.getAttribLocation(shaderProgram, "coordinates");
-    gl.enableVertexAttribArray(coordinatesVar);
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.vertexAttribPointer(coordinatesVar, 2, gl.FLOAT, false, 0, 0);
-
-    // Now we can tell WebGL to draw the 3 points that make 
-    // up the triangle
-    gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2);
-
-  }
-  },
-  mounted () {
-var gl = glFromId('mainCanvas');
-  this.render(gl, 0.5, 0.5, this.value, 0.5, 0);
-  
-  },
-  components: {
-    'vueSlider': window[ 'vue-slider-component' ],
-  },
-  watch: {
-value: function(newVal, oldVal) {
-console.log('value changed from ' + oldVal + ' to ' + newVal);
-var gl = glFromId('mainCanvas');
-  this.render(gl, 0.5, 0.5, newVal, 0.5, 0);
-}
-  }
-},
-
-);
-
+  );
 
 </script>
 <style>
