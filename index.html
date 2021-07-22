@@ -7,7 +7,10 @@
 
 
 <div id="app">
-  <vue-slider ref="slider" v-model="value" v-bind="options"></vue-slider>
+  <input v-model="value" />
+  <vue-slider ref="slider" v-model="value" v-bind="options" :adsorb="true" :interval="1" :marks="true" :contained="true" :drag-on-click="true" :tooltip-formatter="formatter1"></vue-slider>
+
+  <br>
   <h1>{{ value }}</h1>
 </div>
 
@@ -110,12 +113,15 @@
       data() {
         return {
           sliders: {
-            questionOneSides:0,
-            questionTwoRotation:0,
-            questionTwoTranslationX:0,
-            questionTwoTranslationY:0,
-            questionTwoScale:0,
+            questionOneSides: 0,
+            questionTwoRotation: 0,
+            questionTwoTranslationX: 0,
+            questionTwoTranslationY: 0,
+            questionTwoScale: 0,
           },
+          formatter1: '{value}%',
+
+
           value: 3,
           options: {
             dotSize: 14,
