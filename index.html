@@ -1,20 +1,35 @@
 <div id="app">
   <div class="container">
+    <br style="height: 100px;">
     <p class="headline3">
-
-      1 - Escreva uma interface que o usuário insere uma quantidade de lados de um polígono, e o programa deve exibir um polígono regular no centro da tela. Obs: o polígono pode ter no mínimo 3 lados e no máximo 1O.
+      Escreva uma interface que o usuário insere uma quantidade de lados de um polígono, e o programa deve exibir um polígono regular no centro da tela. Obs: o polígono pode ter no mínimo 3 lados e no máximo 1O.
     </p>
     <br>
+
     <canvas id="canvasQuestionOne"></canvas>
-    <vue-slider ref="slider" v-model="value" :adsorb="true" :interval="1" :marks="true" :contained="true" :drag-on-click="true" :tooltip-formatter="sidesFormatter" :min=3 :max=10></vue-slider>
+    <vue-slider ref="slider" v-model="questionOneSides" :adsorb="true" :interval="1" :marks="true" :contained="true" :drag-on-click="true" :tooltip-formatter="sidesFormatter" :min=3 :max=10></vue-slider>
     <br><br>
     <div class="form-center">
-      <input v-model="value" />
+      NÚMERO DE LADOS <span> </span>
+      <input v-model="questionOneSides" />
     </div>
 
+    <br style="height: 100px;">
+    <p class="headline3">
+      Escreva uma interface que contém um polígono regular com número de lados maior que 3, e controles de rotação (em z, sentido horário e anti horário), translação (direita, esquerda, baixo e cima) e escala (aumentar e diminuir). O polígono deve estar com rotação em estado de animação.
+    </p>
+    <br>
+
+    <canvas id="canvasQuestionTwo"></canvas>
+    <vue-slider ref="slider" v-model="questionTwoRotation" :adsorb="true" :interval="1" :marks="10" :contained="true" :drag-on-click="true" :tooltip-formatter="angleFormatter" :min=0 :max=180></vue-slider>
+    <br><br>
+    <div class="form-center">
+          ÂNGULO DE ROTAÇÃO <span> </span>
+      <input v-model="questionTwoRotation" />
+    </div>
 
   </div>
-  <canvas id="canvasQuestionTwo"></canvas>
+
   <canvas id="canvasQuestionThree"></canvas>
 
 
@@ -25,9 +40,12 @@
 
 
   <br>
-  <h1>{{ value }}</h1>
 </div>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&display=swap" rel="stylesheet">
 
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-slider-component@latest/theme/default.css">
@@ -126,18 +144,14 @@
       el: '#app',
       data() {
         return {
-          sliders: {
-            questionOneSides: 0,
-            questionTwoRotation: 0,
-            questionTwoTranslationX: 0,
-            questionTwoTranslationY: 0,
-            questionTwoScale: 0,
-          },
+          questionOneSides: 3,
+          questionTwoRotation: 3,
+          questionTwoTranslationX: 3,
+          questionTwoTranslationY: 3,
+          questionTwoScale: 1,
           sidesFormatter: '{value} lados',
-
-
+          angleFormatter: '{value} graus',
           value: 3,
-
         }
       },
       methods: {
@@ -244,8 +258,8 @@
 
 
 
-        this.render(canvasQuestionOne, 0.5, 0.5, this.value, 0.5, 0);
-        this.render(canvasQuestionTwo, 0.5, 0.5, this.value, 0.5, 0);
+        this.render(canvasQuestionOne, 0.5, 0.5, 3, 0.5, 0);
+        this.render(canvasQuestionTwo, 0.5, 0.5, 4, 0.5, 0);
         this.render(canvasQuestionThree, 0.5, 0.5, this.value, 0.5, 0);
 
 
@@ -254,10 +268,13 @@
         'vueSlider': window['vue-slider-component'],
       },
       watch: {
-        value: function(newVal, oldVal) {
-          console.log('value changed from ' + oldVal + ' to ' + newVal);
+        questionOneSides: function(newVal, oldVal) {
           var gl = glFromId('canvasQuestionOne');
-          this.render(gl, 0.5, 0.5, newVal, 0.5, 0);
+          this.render(gl, 0.5, 0.5, this.questionOneSides, 0.5, 0);
+        },
+        questionTwoRotation: function(newVal, oldVal) {
+          var gl = glFromId('canvasQuestionTwo');
+          this.render(gl, 0.5, 0.5, 4, 0.5, 20 + 180 - this.questionTwoRotation * (Math.PI/180));
         }
       }
     },
@@ -274,7 +291,7 @@
   .headline3 {
     position: relative;
     margin-left: -22px;
-    /* 15px padding + 7px border ribbon shadow*/
+    font-family: 'Merriweather', serif;
     margin-right: -22px;
     padding: 15px;
     background: #e5e5e5;
@@ -307,11 +324,20 @@
   }
 
   .form-center {
+    font-family: 'Oswald', sans-serif;
     text-align: center
   }
 
   input {
     text-align: center;
+    border: 2px solid #dadada;
+    border-radius: 7px;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: #9ecaed;
+    box-shadow: 0 0 10px #9ecaed;
   }
 
 </style>
