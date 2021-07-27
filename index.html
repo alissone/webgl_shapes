@@ -20,27 +20,59 @@
     </p>
     <br>
 
-    <canvas id="canvasQuestionTwo"></canvas>
-    <vue-slider ref="slider" v-model="questionTwoRotation" :adsorb="true" :interval="1" :marks="10" :contained="true" :drag-on-click="true" :tooltip-formatter="angleFormatter" :min=0 :max=180></vue-slider>
-    <br><br>
+    <canvas id="canvasQuestionTwo" style="width:400px;"></canvas>
+    <vue-slider ref="slider" v-model="questionTwoRotation" :adsorb="true" :interval="1" :marks="10" :contained="true" :drag-on-click="true" :tooltip-formatter="angleFormatter" :min=-180 :max=180></vue-slider>
+
     <div class="form-center">
-          ÂNGULO DE ROTAÇÃO <span> </span>
+      ÂNGULO DE ROTAÇÃO <span> </span>
       <input v-model="questionTwoRotation" />
+
+      <br><br>
+      <vue-slider ref="slider" v-model="questionTwoTranslationX" :adsorb="true" :interval="0.01" :marks="0.1" :contained="true" :drag-on-click="true" :min=-1 :max=0.05></vue-slider>
+
+      <div class="form-center">
+        TRANSLAÇÃO X <span> </span>
+        <input v-model="questionTwoTranslationX" />
+      </div>
+
+
+      <br>
+      <vue-slider ref="slider" v-model="questionTwoTranslationY" :adsorb="true" :interval="0.01" :marks="0.1" :contained="true" :drag-on-click="true" :min=-0.5 :max=0.5></vue-slider>
+
+      <div class="form-center">
+        TRANSLAÇÃO Y <span> </span>
+        <input v-model="questionTwoTranslationY" />
+      </div>
+      
+      
+            <br>
+      <vue-slider ref="slider" v-model="questionTwoScale" :adsorb="true" :interval="0.01" :marks="0.1" :contained="true" :drag-on-click="true" :min=-0 :max=1></vue-slider>
+
+      <div class="form-center">
+        ESCALA <span> </span>
+        <input v-model="questionTwoScale" />
+      </div>
+      
+      
+      
+      
     </div>
 
   </div>
 
-  <canvas id="canvasQuestionThree"></canvas>
-
-
-  <script src="https://unpkg.com/vue@2.5.2/dist/vue.min.js"></script>
-
-
-
-
-
-  <br>
 </div>
+
+<canvas id="canvasQuestionThree"></canvas>
+
+
+<script src="https://unpkg.com/vue@2.5.2/dist/vue.min.js"></script>
+
+
+
+
+
+<br>
+
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -68,6 +100,8 @@
     //
     var gl;
     var canvas = document.getElementById(canvasId);
+    canvas.style = "margin-left: auto;margin-right: auto;";
+
     try {
       gl = canvas.getContext('webgl');
     } catch (e) {
@@ -145,14 +179,20 @@
       data() {
         return {
           questionOneSides: 3,
-          questionTwoRotation: 3,
-          questionTwoTranslationX: 3,
-          questionTwoTranslationY: 3,
-          questionTwoScale: 1,
+          questionTwoRotation: 0,
+          questionTwoTranslationX: -0.5,
+          questionTwoTranslationY: 0,
+          questionTwoScale: 0.5,
           sidesFormatter: '{value} lados',
           angleFormatter: '{value} graus',
           value: 3,
         }
+      },
+      computed: {
+        questionTwoState() {
+          return `${this.questionTwoRotation}| ${this.questionTwoTranslationX}| ${this.questionTwoTranslationY}| ${this.questionTwoScale}`;
+
+        },
       },
       methods: {
         render(gl, centerX, centerY, polygonSides, polygonRadius, angle) {
@@ -272,9 +312,9 @@
           var gl = glFromId('canvasQuestionOne');
           this.render(gl, 0.5, 0.5, this.questionOneSides, 0.5, 0);
         },
-        questionTwoRotation: function(newVal, oldVal) {
+        questionTwoState: function(newVal, oldVal) {
           var gl = glFromId('canvasQuestionTwo');
-          this.render(gl, 0.5, 0.5, 4, 0.5, 20 + 180 - this.questionTwoRotation * (Math.PI/180));
+          this.render(gl, 0.5 + this.questionTwoTranslationX, this.questionTwoTranslationY, 4, this.questionTwoScale, 20 + 180 - this.questionTwoRotation * (Math.PI / 180));
         }
       }
     },
@@ -321,6 +361,7 @@
 
   .container {
     width: 70%;
+    max-width: 500px;
   }
 
   .form-center {
@@ -329,6 +370,7 @@
   }
 
   input {
+    margin-left: 24px;
     text-align: center;
     border: 2px solid #dadada;
     border-radius: 7px;
