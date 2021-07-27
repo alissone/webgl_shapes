@@ -1,14 +1,28 @@
-<canvas id="canvasQuestionOne"></canvas>
-<canvas id="canvasQuestionTwo"></canvas>
-<canvas id="canvasQuestionThree"></canvas>
-
-
-<script src="https://unpkg.com/vue@2.5.2/dist/vue.min.js"></script>
-
-
 <div id="app">
-  <input v-model="value" />
-  <vue-slider ref="slider" v-model="value" v-bind="options" :adsorb="true" :interval="1" :marks="true" :contained="true" :drag-on-click="true" :tooltip-formatter="formatter1"></vue-slider>
+  <div class="container">
+    <p class="headline3">
+
+      1 - Escreva uma interface que o usuário insere uma quantidade de lados de um polígono, e o programa deve exibir um polígono regular no centro da tela. Obs: o polígono pode ter no mínimo 3 lados e no máximo 1O.
+    </p>
+    <br>
+    <canvas id="canvasQuestionOne"></canvas>
+    <vue-slider ref="slider" v-model="value" :adsorb="true" :interval="1" :marks="true" :contained="true" :drag-on-click="true" :tooltip-formatter="sidesFormatter" :min=3 :max=10></vue-slider>
+    <br><br>
+    <div class="form-center">
+      <input v-model="value" />
+    </div>
+
+
+  </div>
+  <canvas id="canvasQuestionTwo"></canvas>
+  <canvas id="canvasQuestionThree"></canvas>
+
+
+  <script src="https://unpkg.com/vue@2.5.2/dist/vue.min.js"></script>
+
+
+
+
 
   <br>
   <h1>{{ value }}</h1>
@@ -119,51 +133,11 @@
             questionTwoTranslationY: 0,
             questionTwoScale: 0,
           },
-          formatter1: '{value}%',
+          sidesFormatter: '{value} lados',
 
 
           value: 3,
-          options: {
-            dotSize: 14,
-            width: 'auto',
-            height: 4,
-            contained: false,
-            direction: 'ltr',
-            data: null,
-            dataLabel: 'label',
-            dataValue: 'value',
-            min: 3,
-            max: 12,
-            interval: 1,
-            disabled: false,
-            clickable: true,
-            duration: 0.5,
-            adsorb: false,
-            lazy: false,
-            tooltip: 'active',
-            tooltipPlacement: 'top',
-            tooltipFormatter: void 0,
-            useKeyboard: false,
-            keydownHook: null,
-            dragOnClick: false,
-            enableCross: true,
-            fixed: false,
-            minRange: void 0,
-            maxRange: void 0,
-            order: true,
-            marks: false,
-            dotOptions: void 0,
-            dotAttrs: void 0,
-            process: true,
-            dotStyle: void 0,
-            railStyle: void 0,
-            processStyle: void 0,
-            tooltipStyle: void 0,
-            stepStyle: void 0,
-            stepActiveStyle: void 0,
-            labelStyle: void 0,
-            labelActiveStyle: void 0,
-          }
+
         }
       },
       methods: {
@@ -297,5 +271,47 @@
     height: 400;
   }
 
-</style>
+  .headline3 {
+    position: relative;
+    margin-left: -22px;
+    /* 15px padding + 7px border ribbon shadow*/
+    margin-right: -22px;
+    padding: 15px;
+    background: #e5e5e5;
+    background: linear-gradient(#f5f5f5, #e5e5e5);
+    box-shadow: 0 -1px 0 rgba(255, 255, 255, .8) inset;
+    text-shadow: 0 1px 0 #fff;
+  }
 
+  .headline3:before,
+  .headline3:after {
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    content: '';
+    border-top: 6px solid #555;
+    border-left: 6px solid transparent;
+  }
+
+  .headline3:before {
+    border-top: 6px solid #555;
+    border-right: 6px solid transparent;
+    border-left: none;
+    left: auto;
+    right: 0;
+    bottom: -6px;
+  }
+
+  .container {
+    width: 70%;
+  }
+
+  .form-center {
+    text-align: center
+  }
+
+  input {
+    text-align: center;
+  }
+
+</style>
