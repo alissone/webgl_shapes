@@ -1,3 +1,6 @@
+<br><br>
+<div class="form-center">ATENÇÃO:<br>ESSE PROJETO DEVE FUNCIONAR EM QUALQUER NAVEGADOR MODERNO, JSFIDDLE OU CODEPEN</div>
+<br>
 <div id="app">
   <div class="container">
     <br style="height: 100px;">
@@ -43,36 +46,29 @@
         TRANSLAÇÃO Y <span> </span>
         <input v-model="questionTwoTranslationY" />
       </div>
-      
-      
-            <br>
+
+
+      <br>
       <vue-slider ref="slider" v-model="questionTwoScale" :adsorb="true" :interval="0.01" :marks="0.1" :contained="true" :drag-on-click="true" :min=-0 :max=1></vue-slider>
 
       <div class="form-center">
         ESCALA <span> </span>
         <input v-model="questionTwoScale" />
       </div>
-      
-      
-      
-      
+
+
+
+
     </div>
 
   </div>
 
 </div>
 
-<canvas id="canvasQuestionThree"></canvas>
-
 
 <script src="https://unpkg.com/vue@2.5.2/dist/vue.min.js"></script>
 
-
-
-
-
 <br>
-
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -294,13 +290,13 @@
       mounted() {
         var canvasQuestionOne = glFromId('canvasQuestionOne');
         var canvasQuestionTwo = glFromId('canvasQuestionTwo');
-        var canvasQuestionThree = glFromId('canvasQuestionThree');
+//        var canvasQuestionThree = glFromId('canvasQuestionThree');
 
 
 
         this.render(canvasQuestionOne, 0.5, 0.5, 3, 0.5, 0);
         this.render(canvasQuestionTwo, 0.5, 0.5, 4, 0.5, 0);
-        this.render(canvasQuestionThree, 0.5, 0.5, this.value, 0.5, 0);
+//        this.render(canvasQuestionThree, 0.5, 0.5, this.value, 0.5, 0);
 
 
       },
