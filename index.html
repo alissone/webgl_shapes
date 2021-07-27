@@ -213,24 +213,9 @@
             '   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);' +
             '}';
 
-          /*  Configure the canvas to use WebGL
-
-          var gl;
-          
-          try {
-            gl = canvas.getContext('webgl');
-          } catch (e) {
-            throw new Error('no WebGL found');
-          }
-           */
-          // Copy an array of data points forming a triangle to the
-          // graphics hardware
-          //
-
           var vertices = createRegularPolygonvertices(
             centerX, centerY, polygonSides, polygonRadius, angle
           )
-          console.log(vertices)
 
           var buffer = gl.createBuffer();
           gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
